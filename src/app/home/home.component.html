@@ -1,0 +1,33 @@
+<div class="home-container">
+    <div class="hero-section">
+        <h1>Prueba tecnica</h1>
+        <p>Sistema de Gestión de Entidades y Contactos</p>
+    </div>
+
+    <div class="cards-container">
+        <p-card header="Entidades" subheader="Gestión de Empresas" styleClass="p-card-shadow hover-effect">
+            <ng-template pTemplate="header">
+                <div class="card-header-image">
+                    <i class="pi pi-building text-5xl text-primary"></i>
+                </div>
+            </ng-template>
+            <p>Administra la información de las entidades.</p>
+            <ng-template pTemplate="footer">
+                <p-button label="Ir a Entidades" icon="pi pi-arrow-right" [routerLink]="['/entidades']"></p-button>
+            </ng-template>
+        </p-card>
+
+        <p-card header="Contactos" subheader="Gestión de Personas" styleClass="p-card-shadow hover-effect">
+            <ng-template pTemplate="header">
+                <div class="card-header-image">
+                    <i class="pi pi-users text-5xl text-primary"></i>
+                </div>
+            </ng-template>
+            <p>Gestiona los contactos asociados a las entidades del sistema.</p>
+            <ng-template pTemplate="footer">
+                <p-button label="Ir a Contactos" icon="pi pi-arrow-right" severity="secondary"
+                    [routerLink]="['/contactos']"></p-button>
+            </ng-template>
+        </p-card>
+    </div>
+</div>

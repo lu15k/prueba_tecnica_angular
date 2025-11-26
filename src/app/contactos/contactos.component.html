@@ -1,0 +1,153 @@
+<p-card header="Contactos">
+    <p-toast />
+    <p-toolbar styleClass="mb-4 gap-2">
+        <ng-template pTemplate="left">
+            <p-button severity="success" label="Nuevo" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" />
+            <p-button severity="danger" label="Eliminar" icon="pi pi-trash" badge="{{selectedContactos.length}}"
+                (onClick)="deleteSelectedContactos()" [disabled]="!selectedContactos || !selectedContactos.length" />
+        </ng-template>
+
+        <ng-template pTemplate="right">
+        </ng-template>
+    </p-toolbar>
+    <p-table #dt [value]="contactosService.contactos()" [rows]="10" [paginator]="true"
+        [globalFilterFields]="['nombre', 'apellido', 'email', 'entidad.nombre']" [tableStyle]="{ 'min-width': '75rem' }"
+        [rowHover]="true" dataKey="id" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [showCurrentPageReport]="true" [loading]="contactosService.loading()" [(selection)]="selectedContactos">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Lista de contactos</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text"
+                        class="fietext-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-fullld"
+                        placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 4rem">
+                    <p-tableHeaderCheckbox />
+                </th>
+                <th pSortableColumn="nombre" style="min-width:15rem">
+                    Nombre <p-sortIcon field="nombre" />
+                </th>
+                <th pSortableColumn="apellido" style="min-width:15rem">
+                    Apellido <p-sortIcon field="apellido" />
+                </th>
+                <th pSortableColumn="email">
+                    Email <p-sortIcon field="email" />
+                </th>
+                <th pSortableColumn="telefono">
+                    Teléfono <p-sortIcon field="telefono" />
+                </th>
+                <th pSortableColumn="entidad.nombre">
+                    Entidad <p-sortIcon field="entidad.nombre" />
+                </th>
+                <th>
+                    Opciones
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-contacto>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="contacto" />
+                </td>
+                <td>
+                    {{ contacto.nombre }}
+                </td>
+                <td>
+                    {{ contacto.apellido }}
+                </td>
+                <td>
+                    {{ contacto.email }}
+                </td>
+                <td>
+                    {{ contacto.telefono }}
+                </td>
+                <td>
+                    {{ contacto.entidad?.nombre }}
+                </td>
+                <td>
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" severity="success"
+                        (onClick)="edit(contacto)" />
+                    <p-button icon="pi pi-trash" class="mr-2" severity="danger" [rounded]="true" [outlined]="true"
+                        (onClick)="delete(contacto)" />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+                Total {{ total() }} contactos.
+            </div>
+        </ng-template>
+    </p-table>
+
+    <p-dialog [(visible)]="contactoDialog" [style]="{width: '450px'}" header="Detalles del Contacto" [modal]="true"
+        styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <form [formGroup]="form">
+                <div class="field">
+                    <label for="identificacion">Identificación</label>
+                    <input type="text" pInputText id="identificacion" formControlName="identificacion" required
+                        autofocus />
+                    <small class="p-error"
+                        *ngIf="submitted && form.get('identificacion')?.hasError('required')">Identificación es
+                        requerida.</small>
+                    <small class="p-error" *ngIf="submitted && form.get('identificacion')?.hasError('minlength')">La
+                        identificación debe tener al menos 5 caracteres.</small>
+                </div>
+                <div class="field">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" pInputText id="nombre" formControlName="nombre" required />
+                    <small class="p-error" *ngIf="submitted && form.get('nombre')?.hasError('required')">Nombre es
+                        requerido.</small>
+                    <small class="p-error" *ngIf="submitted && form.get('nombre')?.hasError('minlength')">El nombre debe
+                        tener al menos 3 caracteres.</small>
+                </div>
+                <div class="field">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" pInputText id="apellido" formControlName="apellido" required />
+                    <small class="p-error" *ngIf="submitted && form.get('apellido')?.hasError('required')">Apellido es
+                        requerido.</small>
+                    <small class="p-error" *ngIf="submitted && form.get('apellido')?.hasError('minlength')">El apellido
+                        debe tener al menos 3 caracteres.</small>
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="text" pInputText id="email" formControlName="email" required />
+                    <small class="p-error" *ngIf="submitted && form.get('email')?.hasError('required')">Email es
+                        requerido.</small>
+                    <small class="p-error" *ngIf="submitted && form.get('email')?.hasError('email')">Email
+                        inválido.</small>
+                </div>
+                <div class="field">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" pInputText id="telefono" formControlName="telefono" required />
+                    <small class="p-error" *ngIf="submitted && form.get('telefono')?.hasError('required')">Teléfono es
+                        requerido.</small>
+                    <small class="p-error" *ngIf="submitted && form.get('telefono')?.hasError('pattern')">El teléfono
+                        solo debe contener números.</small>
+                </div>
+                <div class="field">
+                    <label for="entidad_id">Entidad</label>
+                    <p-dropdown [options]="entidadesService.entidades()" formControlName="entidad_id"
+                        optionLabel="nombre" optionValue="id" placeholder="Seleccione una entidad" appendTo="body">
+                    </p-dropdown>
+                    <small class="p-error" *ngIf="submitted && form.get('entidad_id')?.hasError('required')">Entidad es
+                        requerida.</small>
+                </div>
+            </form>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                (click)="hideDialog()"></button>
+            <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
+                (click)="saveContacto()"></button>
+        </ng-template>
+    </p-dialog>
+
+</p-card>

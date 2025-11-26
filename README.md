@@ -56,3 +56,29 @@ A continuación, se describen las tareas que debes realizar en el framework Angu
 ---
 
 Si tienes alguna pregunta o necesitas asistencia técnica durante la ejecución de esta prueba, no dudes en comunicarte con el contacto que te proporcionó esta tarea. ¡Buena suerte! 😊
+
+---
+
+### **Pruebas Manuales**
+
+A continuación se detallan las vistas y los parámetros necesarios para realizar las pruebas manuales de la aplicación.
+
+#### **1. Entidades**
+- **Ruta:** `/entidades`
+- **Funcionalidades:** Listado, Creación, Edición, Eliminación (individual y múltiple).
+- **Parámetros del Formulario:**
+  - **Nombre:** Requerido, mínimo 3 caracteres.
+  - **NIT:** Requerido, mínimo 5 caracteres.
+  - **Dirección:** Requerido.
+  - **Teléfono:** Requerido, solo números (`^[0-9]+$`).
+  - **Email:** Requerido, formato de correo válido.
+
+#### **2. Contactos**
+- **Ruta:** `/contactos`
+- **Funcionalidades:** Listado, Creación, Edición, Eliminación (individual y múltiple).
+- **Parámetros del Formulario:**
+  - **Nombre:** Requerido, mínimo 3 caracteres.
+  - **Apellido:** Requerido, mínimo 3 caracteres.
+  - **Email:** Requerido, formato de correo válido.
+  - **Teléfono:** Requerido, solo números (`^[0-9]+$`).
+  - **Entidad:** Requerido (Selección desde lista desplegable).

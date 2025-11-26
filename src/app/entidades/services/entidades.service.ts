@@ -2,14 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { StateEntidad } from '../interfaces/state-entidad';
 import { Entidad } from '../interfaces/entidad';
-import { delay } from 'rxjs';
+import { delay, forkJoin } from 'rxjs';
+
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntidadesService {
   private http = inject(HttpClient)
-  url: string = "http://127.0.0.1:8000/api/"
+  url: string = environment.apiUrl + "/"
   #state = signal<StateEntidad>({
     loading: true,
     entidades: []
@@ -37,6 +39,42 @@ export class EntidadesService {
     });
 
   }
+
+
+  create(entidad: Partial<Entidad>) {
+    return this.http.post<Entidad>(`${this.url}entidades`, entidad).subscribe({
+      next: () => {
+        this.refresh();
+      },
+      error: (error) => {
+        console.error('Error al crear entidad:', error);
+      }
+    });
+  }
+
+  update(id: number, entidad: Partial<Entidad>) {
+    return this.http.put<Entidad>(`${this.url}entidades/${id}`, entidad).subscribe({
+      next: () => {
+        this.refresh();
+      },
+      error: (error) => {
+        console.error('Error al actualizar entidad:', error);
+      }
+    });
+  }
+
+  deleteMany(ids: number[]) {
+    const requests = ids.map(id => this.http.delete(`${this.url}entidades/${id}`));
+    forkJoin(requests).subscribe({
+      next: () => {
+        this.refresh();
+      },
+      error: (error) => {
+        console.error('Error al eliminar entidades:', error);
+      }
+    });
+  }
+
   delete(entidad: Entidad): void {
     this.http.delete<Entidad>(`${this.url}entidades/${entidad.id}`).subscribe({
       next: (res) => {

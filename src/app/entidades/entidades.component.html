@@ -6,44 +6,25 @@
     <p-toast />
     <p-toolbar styleClass="mb-4 gap-2">
         <ng-template pTemplate="left">
-            <p-button 
-                severity="success" 
-                label="Nueva" 
-                icon="pi pi-plus" 
-                class="mr-2" 
-                (onClick)="openNew()" />
-            <p-button 
-                severity="danger" 
-                label="Eliminar" 
-                icon="pi pi-trash" badge="{{selectedEntidades.length}}" 
-                />
+            <p-button severity="success" label="Nueva" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" />
+            <p-button severity="danger" label="Eliminar" icon="pi pi-trash" badge="{{selectedEntidades.length}}"
+                (onClick)="deleteSelectedEntidades()" [disabled]="!selectedEntidades || !selectedEntidades.length" />
         </ng-template>
-    
+
         <ng-template pTemplate="right">
         </ng-template>
     </p-toolbar>
-    <p-table
-        #dt
-        [value]="entidadesService.entidades()"
-        [rows]="10"
-        [paginator]="true"
+    <p-table #dt [value]="entidadesService.entidades()" [rows]="10" [paginator]="true"
         [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
-        [tableStyle]="{ 'min-width': '75rem' }"
-        [rowHover]="true"
-        dataKey="id"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [showCurrentPageReport]="true"
-        [loading]="entidadesService.loading()"
-        [(selection)]="selectedEntidades" 
-    >
+        [tableStyle]="{ 'min-width': '75rem' }" [rowHover]="true" dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true"
+        [loading]="entidadesService.loading()" [(selection)]="selectedEntidades">
         <ng-template pTemplate="caption">
             <div class="flex align-items-center justify-content-between">
                 <h5 class="m-0">Lista de entidades</h5>
                 <span class="p-input-icon-left">
                     <i class="pi pi-search"></i>
-                    <input 
-                        pInputText 
-                        type="text" 
+                    <input pInputText type="text"
                         class="fietext-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-fullld"
                         placeholder="Search..." />
                 </span>
@@ -89,29 +70,11 @@
                     {{ entidad.direccion }}
                 </td>
                 <td>
-                    <p-button 
-                     
-                        icon="pi pi-pencil" 
-                        class="mr-2" 
-                        [rounded]="true" 
-                        [outlined]="true" 
-                        severity="success" 
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" severity="success"
                         (onClick)="edit(entidad)" />
-                    <p-button 
-                     
-                        icon="pi pi-trash" 
-                        class="mr-2" 
-                        severity="danger" 
-                        [rounded]="true" 
-                        [outlined]="true" 
+                    <p-button icon="pi pi-trash" class="mr-2" severity="danger" [rounded]="true" [outlined]="true"
                         (onClick)="entidadesService.delete(entidad)" />
-                    <p-button 
-                     
-                        icon="pi pi-users" 
-                        severity="info" 
-                        [rounded]="true" 
-                        [outlined]="true" 
-                        />
+                    <p-button icon="pi pi-users" severity="info" [rounded]="true" [outlined]="true" />
 
                 </td>
             </tr>
@@ -122,5 +85,58 @@
             </div>
         </ng-template>
     </p-table>
+
+    <p-dialog [(visible)]="entidadDialog" [style]="{width: '450px'}" header="Detalles de la Entidad" [modal]="true"
+        styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <form [formGroup]="form">
+                <div class="field">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" pInputText id="nombre" formControlName="nombre" required autofocus />
+                    <small class="p-error" *ngIf="submitted && form.get('nombre')?.hasError('required')">Nombre es
+                        requerido.</small>
+                    <small class="p-error" *ngIf="submitted && form.get('nombre')?.hasError('minlength')">El nombre debe
+                        tener al menos 3 caracteres.</small>
+                </div>
+                <div class="field">
+                    <label for="nit">NIT</label>
+                    <input type="text" pInputText id="nit" formControlName="nit" required />
+                    <small class="p-error" *ngIf="submitted && form.get('nit')?.hasError('required')">NIT es
+                        requerido.</small>
+                    <small class="p-error" *ngIf="submitted && form.get('nit')?.hasError('minlength')">El NIT debe tener
+                        al menos 5 caracteres.</small>
+                </div>
+                <div class="field">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" pInputText id="direccion" formControlName="direccion" required />
+                    <small class="p-error" *ngIf="submitted && form.get('direccion')?.hasError('required')">Dirección es
+                        requerida.</small>
+                </div>
+                <div class="field">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" pInputText id="telefono" formControlName="telefono" required />
+                    <small class="p-error" *ngIf="submitted && form.get('telefono')?.hasError('required')">Teléfono es
+                        requerido.</small>
+                    <small class="p-error" *ngIf="submitted && form.get('telefono')?.hasError('pattern')">El teléfono
+                        solo debe contener números.</small>
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="text" pInputText id="email" formControlName="email" required />
+                    <small class="p-error" *ngIf="submitted && form.get('email')?.hasError('required')">Email es
+                        requerido.</small>
+                    <small class="p-error" *ngIf="submitted && form.get('email')?.hasError('email')">Email
+                        inválido.</small>
+                </div>
+            </form>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                (click)="hideDialog()"></button>
+            <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text"
+                (click)="saveEntidad()"></button>
+        </ng-template>
+    </p-dialog>
 
 </p-card>
